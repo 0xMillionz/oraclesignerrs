@@ -1,0 +1,20 @@
+[package]
+name = "oraclesignerrs"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+solana-client = "1.10"
+solana-sdk = "1.10"
+pyth-sdk-solana = "0.4"
+
+ed25519-dalek = { version = "1", features = ["serde"] }
+rand = "0.8.5"
+bincode = "1"
+
+actix-web = "4"
+derive_more = "0.99"
+dotenv = "0.15"
+config = "0.13"
+serde = { version = "1.0", features = ["derive"] }
+serde_json = "1.0"
