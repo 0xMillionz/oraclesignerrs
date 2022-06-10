@@ -1,5 +1,5 @@
+use clientpool::ClientPool;
 use dotenv::dotenv;
-use solana_client::rpc_client::RpcClient;
 use std::env;
 use actix_web::{
     web,
@@ -9,12 +9,14 @@ use actix_web::{
 use ed25519_dalek::Keypair;
 
 pub mod handlers;
+pub mod clientpool;
 
 // TODO(millionz): make a client pool to prevent 
 // high volume jams
 pub struct AppData {
-    app_keypair: Keypair,
-    client: RpcClient,
+    price_keypair: Keypair,
+    expo_keypair: Keypair,
+    client_pool: clientpool::ClientPool,
 }
 
 #[actix_web::main]
@@ -26,11 +28,15 @@ async fn main() -> std::io::Result<()> {
             .route("/pyth/{product}", web::get().to(handlers::pyth))
             .app_data(web::Data::new(
                 AppData{
-                    app_keypair: Keypair::from_bytes(env::var("KEYPAIR")
+                    price_keypair: Keypair::from_bytes(env::var("PRICEKEYPAIR")
                         .unwrap()
                         .as_bytes()
                     ).unwrap(),
-                    client: RpcClient::new("https://api.mainnet-beta.solana.com".to_string()),
+                    expo_keypair: Keypair::from_bytes(env::var("EXPOKEYPAIR")
+                        .unwrap()
+                        .as_bytes()    
+                    ).unwrap(),
+                    client_pool: ClientPool::new(5),
                 }
             ))
     })
