@@ -1,6 +1,6 @@
 use actix_web::{
     web,
-    Error,
+    Error, App,
 };
 use ed25519_dalek::{
     Keypair,
@@ -13,6 +13,7 @@ use solana_sdk::pubkey::Pubkey;
 use serde::{ Serialize, Deserialize } ;
 use std::str::FromStr;
 
+use crate::AppData;
 
 #[derive(Serialize, Deserialize)]
 pub struct PriceRes {
@@ -23,15 +24,14 @@ pub struct PriceRes {
 
 pub async fn pyth(
     pyth_product_key_str: web::Path<String>,
-    keypair: web::Data<Keypair>,
+    app_data: web::Data<AppData>,
 ) -> Result<web::Json<PriceRes>, Error> {
-    // TODO(millionz): fix this making a client every request
-    // tbh we should just make a system thread that update loops 
-    // some 'static and then read it with the handler
-    let rpc_client = RpcClient::new("https://api.mainnet-beta.solana.com".to_string());
+    let rpc_client = &app_data.client; 
+    let keypair = &app_data.app_keypair; 
+
     let prod_key = Pubkey::from_str(&pyth_product_key_str).unwrap();
 
-    let mut price_acct = rpc_client
+    let mut price_acct = rpc_client 
         .get_account(&prod_key)
         .unwrap();
     
