@@ -1,14 +1,12 @@
 use actix_web::{
     web,
-    Error, App,
+    Error, 
 };
 use ed25519_dalek::{
-    Keypair,
     Signature,
     Signer
 };
 use pyth_sdk_solana::load_price_feed_from_account;
-use solana_client::rpc_client::RpcClient;
 use solana_sdk::pubkey::Pubkey;
 use serde::{ Serialize, Deserialize } ;
 use std::str::FromStr;
